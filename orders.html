@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block header_actions %}
+<a href="/orders/new" class="btn btn-primary">+ سفارش جدید</a>
+{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>شماره</th><th>مشتری</th><th>تاریخ</th><th>مبلغ کل</th><th>وضعیت</th><th>تغییر وضعیت</th><th></th></tr></thead>
+      <tbody>
+        {% for order, customer_name in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ customer_name }}</td>
+          <td>{{ order.created_at.strftime('%Y/%m/%d') }}</td>
+          <td>{{ '{:,.0f}'.format(order.total_price) }} تومان</td>
+          <td><span class="badge badge-{{ order.status }}">{{ {'pending':'در انتظار','processing':'در حال پردازش','delivered':'تحویل شده','cancelled':'لغو شده'}[order.status] }}</span></td>
+          <td>
+            <form method="post" action="/orders/{{ order.id }}/status" class="inline-form">
+              <select name="new_status" onchange="this.form.submit()">
+                <option value="pending" {{ 'selected' if order.status == 'pending' }}>در انتظار</option>
+                <option value="processing" {{ 'selected' if order.status == 'processing' }}>در حال پردازش</option>
+                <option value="delivered" {{ 'selected' if order.status == 'delivered' }}>تحویل شده</option>
+                <option value="cancelled" {{ 'selected' if order.status == 'cancelled' }}>لغو شده</option>
+              </select>
+            </form>
+          </td>
+          <td><a href="/orders/{{ order.id }}/delete" class="btn btn-danger btn-sm" onclick="return confirm('این سفارش حذف شود؟')">حذف</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty-row">سفارشی وجود ندارد.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

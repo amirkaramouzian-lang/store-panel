@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card form-card">
+  <form method="post" action="/inventory/new">
+    <div class="form-group"><label for="name">نام محصول</label><input type="text" id="name" name="name" required></div>
+    <div class="form-group"><label for="category">دسته‌بندی</label><input type="text" id="category" name="category"></div>
+    <div class="form-group"><label for="quantity">موجودی</label><input type="number" id="quantity" name="quantity" min="0" value="0" required></div>
+    <div class="form-group"><label for="unit_price">قیمت واحد (تومان)</label><input type="number" id="unit_price" name="unit_price" min="0" step="1000" value="0" required></div>
+    <div class="form-group"><label for="low_stock_threshold">آستانه هشدار موجودی کم</label><input type="number" id="low_stock_threshold" name="low_stock_threshold" min="0" value="5" required></div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">ذخیره محصول</button>
+      <a href="/inventory" class="btn btn-secondary">انصراف</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

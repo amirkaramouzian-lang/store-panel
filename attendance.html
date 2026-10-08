@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block header_actions %}
+<a href="/attendance/report" class="btn btn-secondary">📊 گزارش ماهانه</a>
+<a href="/attendance/staff/new" class="btn btn-primary">+ کارمند جدید</a>
+{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>حضور امروز — {{ today.strftime('%Y/%m/%d') }}</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>نام</th><th>ورود</th><th>خروج</th><th>وضعیت</th><th></th></tr></thead>
+      <tbody>
+        {% for row, staff_name in today_rows %}
+        <tr>
+          <td>{{ staff_name }}</td>
+          <td>{{ row.check_in or '—' }}</td>
+          <td>{{ row.check_out or '—' }}</td>
+          <td><span class="badge badge-att-{{ row.status }}">{{ {'present':'حاضر','absent':'غایب','late':'تأخیر'}[row.status] }}</span></td>
+          <td>
+            {% if not row.check_out %}
+            <form method="post" action="/attendance/checkout" class="inline-form">
+              <input type="hidden" name="attendance_id" value="{{ row.id }}">
+              <button type="submit" class="btn btn-secondary btn-sm">ثبت خروج</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty-row">امروز رکوردی ثبت نشده است.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>لیست کارمندان</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>نام</th><th>سمت</th><th>تلفن</th><th></th></tr></thead>
+      <tbody>
+        {% for s in staff %}
+        <tr>
+          <td>{{ s.name }}</td>
+          <td>{{ s.role or '—' }}</td>
+          <td>{{ s.phone or '—' }}</td>
+          <td>
+            {% if s.id not in present_ids %}
+            <form method="post" action="/attendance/checkin" class="inline-form">
+              <input type="hidden" name="staff_id" value="{{ s.id }}">
+              <button type="submit" class="btn btn-primary btn-sm">ثبت ورود</button>
+            </form>
+            {% else %}
+            <span class="text-muted">ثبت‌شده</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty-row">کارمندی ثبت نشده است.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

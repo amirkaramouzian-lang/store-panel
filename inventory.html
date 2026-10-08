@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block header_actions %}
+<a href="/inventory/new" class="btn btn-primary">+ محصول جدید</a>
+{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>نام محصول</th><th>دسته</th><th>موجودی</th><th>قیمت واحد</th><th>آستانه هشدار</th><th>اصلاح موجودی</th><th>عملیات</th></tr></thead>
+      <tbody>
+        {% for p in products %}
+        <tr class="{{ 'row-low' if p.is_low }}">
+          <td>{{ p.name }}</td>
+          <td>{{ p.category or '—' }}</td>
+          <td class="{{ 'text-danger' if p.is_low }}">{{ p.quantity }}{% if p.is_low %} ⚠️{% endif %}</td>
+          <td>{{ '{:,.0f}'.format(p.unit_price) }} تومان</td>
+          <td>{{ p.low_stock_threshold }}</td>
+          <td>
+            <form method="post" action="/inventory/{{ p.id }}/adjust" class="inline-form adjust-form">
+              <input type="number" name="delta" value="1" step="1">
+              <button type="submit" class="btn btn-secondary btn-sm">اعمال</button>
+            </form>
+          </td>
+          <td class="actions">
+            <a href="/inventory/{{ p.id }}/edit" class="btn btn-secondary btn-sm">ویرایش</a>
+            <a href="/inventory/{{ p.id }}/delete" class="btn btn-danger btn-sm" onclick="return confirm('این محصول حذف شود؟')">حذف</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty-row">محصولی ثبت نشده است.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

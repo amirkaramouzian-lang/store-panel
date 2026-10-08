@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>🏆 پرفروش‌ترین محصولات</h2>
+  <div class="bar-list">
+    {% for name, total_sold in top_sellers %}
+    <div class="bar-item">
+      <div class="bar-label"><span>{{ name }}</span><span>{{ total_sold }} عدد</span></div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: {{ (total_sold / max_sold * 100) | round(0) | int }}%"></div>
+      </div>
+    </div>
+    {% else %}
+    <p class="empty-row">فروشی ثبت نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="card">
+  <h2>⚠️ موجودی کم — محصولات نیازمند سفارش</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>محصول</th><th>موجودی فعلی</th><th>آستانه</th><th>تعداد پیشنهادی سفارش</th></tr></thead>
+      <tbody>
+        {% for r in reorder %}
+        <tr class="row-low">
+          <td>{{ r.name }}</td>
+          <td class="text-danger">{{ r.quantity }}</td>
+          <td>{{ r.threshold }}</td>
+          <td><strong>{{ r.suggested_qty }}</strong> عدد</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty-row">همه محصولات موجودی کافی دارند. 👍</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
